@@ -1,0 +1,67 @@
+
+#topology {  
+    border: 1px solid #000000;  
+}
+
+.node {
+}
+
+.node1 {
+}
+
+.node2 {
+}
+
+.node3 {
+}
+
+.hnode {
+}
+
+.hnode.fixed {
+    fill: #C0C0C0;
+}
+
+.hnode text {
+    font-size: 10px;
+}
+
+.node.fixed {
+    fill: #C0C0C0;
+}
+
+.node text {
+    font-size: 14px;
+}
+
+.node1{
+    font-size: 14px;
+    fill: #FF0000;
+}
+
+.node2{
+    font-size: 14px;
+    fill: #0000FF;
+}
+
+.node3{
+    font-size: 14px;
+    fill: #00FF00;
+}
+
+
+.link {
+    stroke: #090909;
+    stroke-opacity: .6;
+    stroke-width: 2px;
+}
+
+.port circle {
+    stroke: black;
+    fill: #C5F9F9;
+}
+
+.port text {
+    font-size: 10px;
+}
+
