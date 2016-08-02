@@ -1,4 +1,4 @@
-#multicast the flow go through s3 to 10.0.0.13
+#multicast the flow go through s3 to 10.0.0.7
 curl -X POST -d '
 {
     "dpid" : 3,
@@ -11,12 +11,12 @@ curl -X POST -d '
 		{
 		    "type" : "SET_FIELD",
                     "field" : "eth_dst",
-                    "value" : "00:00:00:00:01:03"
+                    "value" : "00:00:00:00:00:07"
                 },
 		{
 		    "type" : "SET_FIELD",
                     "field" : "ipv4_dst",
-                    "value" : "10.0.0.13"
+                    "value" : "10.0.0.7"
                 },
 		{
 		    "type" : "OUTPUT",
@@ -49,12 +49,12 @@ curl -X POST -d '
 		{
 		    "type" : "SET_FIELD",
                     "field" : "eth_dst",
-                    "value" : "00:00:00:00:01:03"
+                    "value" : "00:00:00:00:00:07"
                 },
 		{
 		    "type" : "SET_FIELD",
                     "field" : "ipv4_dst",
-                    "value" : "10.0.0.13"
+                    "value" : "10.0.0.7"
                 },
 		{
 		    "type" : "OUTPUT",
@@ -68,12 +68,12 @@ curl -X POST -d '
 		{
 		    "type" : "SET_FIELD",
                     "field" : "eth_dst",
-                    "value" : "00:00:00:00:01:02"
+                    "value" : "00:00:00:00:00:06"
                 },
 		{
 		    "type" : "SET_FIELD",
                     "field" : "ipv4_dst",
-                    "value" : "10.0.0.12"
+                    "value" : "10.0.0.6"
                 },
 		{
 		    "type" : "OUTPUT",
@@ -166,7 +166,7 @@ curl -X POST -d '
 }
 ' http://localhost:8080/stats/flowentry/add
 
-#install flows to prevent 10.0.0.13 from sending extra packets to the controller,
+#install flows to prevent 10.0.0.7 from sending extra packets to the controller,
 #thus prventing it from being detected by the topology module
 
 curl -X POST -d '

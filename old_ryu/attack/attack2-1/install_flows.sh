@@ -57,13 +57,13 @@ curl -X POST -d '
 }
 ' http://localhost:8080/stats/flowentry/add
 
-#direct the flow from 10.0.0.12 to 10.0.0.13 to 10.0.0.3 and vice versa
+#direct the flow from 10.0.0.6 to 10.0.0.7 to 10.0.0.3 and vice versa
 curl -X POST -d '
 {
     "dpid" : 3,
     "table_id" : 0,
     "priority" : 16,
-    "match" : {"in_port" : 5, "eth_type" : 2048, "ipv4_dst" : "10.0.0.13"},
+    "match" : {"in_port" : 5, "eth_type" : 2048, "ipv4_dst" : "10.0.0.7"},
     "instructions" : [
 	{
 	    "type" : "APPLY_ACTIONS",
@@ -93,7 +93,7 @@ curl -X POST -d '
     "dpid" : 3,
     "table_id" : 0,
     "priority" : 16,
-    "match" : {"in_port" : 6, "eth_type" : 2048, "ipv4_dst" : "10.0.0.12"},
+    "match" : {"in_port" : 6, "eth_type" : 2048, "ipv4_dst" : "10.0.0.6"},
     "instructions" : [
 	{
 	    "type" : "APPLY_ACTIONS",
@@ -118,16 +118,16 @@ curl -X POST -d '
 }
 ' http://localhost:8080/stats/flowentry/add
 
-#when 10.0.0.3 tries to send packets to 10.0.0.12,
-#modify the header to fool 10.0.0.12 that they are from 10.0.0.13
-#for packets to 10.0.0.13, the same
+#when 10.0.0.3 tries to send packets to 10.0.0.6,
+#modify the header to fool 10.0.0.6 that they are from 10.0.0.7
+#for packets to 10.0.0.7, the same
 
 curl -X POST -d '
 {
     "dpid" : 3,
     "table_id" : 0,
     "priority" : 16,
-    "match" : {"in_port" : 4, "eth_type" : 2048, "ipv4_dst" : "10.0.0.12"},
+    "match" : {"in_port" : 4, "eth_type" : 2048, "ipv4_dst" : "10.0.0.6"},
     "instructions" : [
 	{
 	    "type" : "APPLY_ACTIONS",
@@ -135,12 +135,12 @@ curl -X POST -d '
 		{
 		    "type" : "SET_FIELD",
                     "field" : "eth_src",
-                    "value" : "00:00:00:00:01:03"
+                    "value" : "00:00:00:00:00:07"
                 },
 		{
 		    "type" : "SET_FIELD",
                     "field" :  "ipv4_src",
-                    "value" : "10.0.0.13"
+                    "value" : "10.0.0.7"
                 },
 		{
 		    "type" : "OUTPUT",
@@ -157,7 +157,7 @@ curl -X POST -d '
     "dpid" : 3,
     "table_id" : 0,
     "priority" : 16,
-    "match" : {"in_port" : 4, "eth_type" : 2048, "ipv4_dst" : "10.0.0.13"},
+    "match" : {"in_port" : 4, "eth_type" : 2048, "ipv4_dst" : "10.0.0.7"},
     "instructions" : [
 	{
 	    "type" : "APPLY_ACTIONS",
@@ -165,12 +165,12 @@ curl -X POST -d '
 		{
 		    "type" : "SET_FIELD",
                     "field" : "eth_src",
-                    "value" : "00:00:00:00:01:02"
+                    "value" : "00:00:00:00:00:06"
                 },
 		{
 		    "type" : "SET_FIELD",
                     "field" : "ipv4_src",
-                    "value" : "10.0.0.12"
+                    "value" : "10.0.0.6"
                 },
 		{
 		    "type" : "OUTPUT",
