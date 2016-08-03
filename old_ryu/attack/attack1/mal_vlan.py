@@ -16,7 +16,7 @@ class MyTopo( Topo ):
         #add hosts
         vm1 = self.addHost('vm1', ip="10.0.0.1", mac="00:00:00:00:00:01")
         vm2 = self.addHost('vm2', ip="10.0.0.3", mac="00:00:00:00:00:03")
-        vm3 = self.addHost('vm3', ip="10.0.0.3", mac="00:00:00:00:00:03")
+        vm3 = self.addHost('vm3', ip="10.0.0.3", mac="00:00:00:00:00:02")
         vm4 = self.addHost('vm4', ip="10.0.0.4", mac="00:00:00:00:00:04")
         vm5 = self.addHost('vm5', ip="10.0.0.5", mac="00:00:00:00:00:05")
         vm6 = self.addHost('vm6', ip="10.0.0.6", mac="00:00:00:00:00:06")

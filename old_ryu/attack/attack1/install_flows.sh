@@ -1,3 +1,4 @@
+#modify the flooding group of vid=1 to replace vm3 with vm2
 curl -X POST -d '{
     "dpid": 3,
     "group_id": 0
@@ -43,7 +44,6 @@ curl -X POST -d '
 }
 ' http://localhost:8080/stats/groupentry/add
 
-#let the icmp pass through, so that ping acts normally
 curl -X POST -d '
 {
     "dpid" : 3,
@@ -64,6 +64,7 @@ curl -X POST -d '
 }
 ' http://localhost:8080/stats/flowentry/add
 
+#add the tagging flow for vm2
 curl -X POST -d '
 {
     "dpid" : 3,

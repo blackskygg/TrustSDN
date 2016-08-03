@@ -93,15 +93,28 @@ elem.update = function () {
     this.node = this.node.data(topo.nodes);
     this.node.exit().remove();
     var nodeEnter = this.node.enter().append("g")
-        .attr("class", "node")
+        .attr("class", function(d) {
+	    switch(d.vid){
+	    case 1:
+		return "node1";
+		break;
+	    case 2:
+		return "node2";
+		break;
+	    case 3:
+		return "node3";
+		break;
+	    default:
+		return "node";
+		break;
+	    }
+	})
         .on("dblclick", function(d) { d3.select(this).classed("fixed", d.fixed = false); })
         .call(this.drag);
     nodeEnter.append("image")
     //select corresponding pics according to node types
         .attr("xlink:href", function(d) {
-	    if (d.dpid == "ffffffffffffffff")
-		return "./vswitch.svg";
-	    else if (d.type == 0)
+	    if (d.type == 0)
 		return "./router.svg";
 	    else 
 		return "./host.svg";
@@ -110,14 +123,23 @@ elem.update = function () {
         .attr("y", -CONF.image.height/2)
         .attr("width", CONF.image.width)
         .attr("height", CONF.image.height);
+
     nodeEnter.append("text")
         .attr("dx", -CONF.image.width/2)
-        .attr("dy", CONF.image.height-10)
+        .attr("dy", CONF.image.height+10)
         .text(function(d) {
 	    if (d.type == 0)
 		return "dpid: " + trim_zero(d.dpid);
 	    else
 		return "mac: " + d.mac;
+	})
+
+    nodeEnter.append("text")
+        .attr("dx", -CONF.image.width/2)
+        .attr("dy", CONF.image.height-10)
+	.text(function(d) {
+	    if (d.type == 1)
+		return "group: " + d.vid;
 	});
     
 
@@ -147,10 +169,10 @@ var topo = {
 	this.links = []
 	this.node_index = {}, // dpid -> index of nodes array
 
-        this.add_nodes(data.switches, data.hosts);
+        this.add_nodes(data.switches, data.hosts, data.vlan_info);
         this.add_links(data.links, data.switches, data.hosts);
     },
-    add_nodes: function (slist, hlist) {
+    add_nodes: function (slist, hlist, vlan_info) {
 	var i = 0, len = 0;
 
 	//add switches(type = 0)
@@ -159,13 +181,17 @@ var topo = {
             this.nodes.push(slist[i]);
         }
 	//add hosts(type = 1)
-	try {
+	try{
 	    for (i = 0; i < hlist.length ; ++i) {
 		hlist[i].type = 1;
+		dpid = parseInt(hlist[i].port.dpid, 16)
+		port_no = parseInt(hlist[i].port.port_no)
+		hlist[i].vid = vlan_info[dpid][port_no]
 		this.nodes.push(hlist[i]);
 	    }
-	} catch (e) {
+	}catch(e) {
 	}
+
 
 	this.refresh_node_index();
 
@@ -309,8 +335,10 @@ function initialize_topology() {
     d3.json("/v1.0/topology/switches", function(error, switches) {
         d3.json("/v1.0/topology/links", function(error, links) {
 	    d3.json("/v1.0/topology/hosts", function(error, hosts) {
-		topo.initialize({switches: switches, links: links, hosts:hosts});
-		elem.update();
+		d3.json("/vlaninfo", function(error, vlan_info) {
+		    topo.initialize({switches: switches, links: links, hosts: hosts, vlan_info: vlan_info});
+		    elem.update();
+		});
             });
 	});
     });

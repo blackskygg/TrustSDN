@@ -7,21 +7,54 @@ from ryu.lib.packet import packet
 from ryu.lib.packet import vlan
 from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
+from ryu.app.wsgi import ControllerBase, WSGIApplication, route
+from webob import Response
 import json
 import pdb
 
 VLAN_TAG_TBL  = 0
 FLOOD_TBL = 1
 
+class VlanInfoServerController(ControllerBase):
+    def __init__(self, req, link, data, **config):
+        super(VlanInfoServerController, self).__init__(req, link, data, **config)
+        self.vlan_config = data['vlan_config']
+        self.port_to_vlan = {}
+        self.calc_port_to_vlan()
+
+    def calc_port_to_vlan(self):
+        for dpid, vlan_info in self.vlan_config.items():
+            for vid, ports in vlan_info.items():
+                for port in ports[0]:
+                    self.port_to_vlan.setdefault(dpid, {})
+                    self.port_to_vlan[dpid][port] = int(vid)
+            
+        
+    @route('vlaninfo', '/vlaninfo')
+    def static_handler(self, req, **kwargs):
+        body = json.dumps(self.port_to_vlan)
+        return Response(content_type='application/json', body=body)
+
 class Vlan14(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_4.OFP_VERSION]
+
+    _CONTEXTS = {
+        'wsgi': WSGIApplication,
+    }
+
 
     def __init__(self, *args, **kwargs):
         super(Vlan14, self).__init__(*args, **kwargs)
         
         #dict{dpid=>dict{vlan=>list[list[end_ports], list[mid_ports]]}}
         self.vlan_to_port = {}
-        self.get_vlan_ports_info("vlan_conf.json")
+        self.get_vlan_ports_info('./vlan_conf.json')
+
+        #initiate the vlan info server
+        wsgi = kwargs['wsgi']
+        data = {'vlan_config' :  self.vlan_to_port}
+        wsgi.register(VlanInfoServerController, data)
+
 
     def get_vlan_ports_info(self, filename):
         f = open(filename, "r")
@@ -145,8 +178,11 @@ class Vlan14(app_manager.RyuApp):
         self.logger.info("packet in %s %s %s %s %s", dpid, src, dst, in_port, vid)
 
         actions = []
-        if in_port in self.vlan_to_port[str(dpid)][str(vid)][0]:
-            actions = [parser.OFPActionPopVlan()]
+	try:
+	    if in_port not in self.vlan_to_port[str(dpid)][str(vid)][1]:
+            	actions = [parser.OFPActionPopVlan()]
+	except:
+	    pass
         actions.append(parser.OFPActionOutput(in_port))
         match = parser.OFPMatch(eth_dst=src, vlan_vid=0x1000 | int(vid))
         self.add_flow(datapath, 2, match, actions)
