@@ -117,14 +117,14 @@ class TrustSDNStatsController(StatsController):
 
     def connect_hosts(self, req, vdpid1, vport1, vdpid2, vport2, **_kwargs):
         user = self.manager.get_user(req, **_kwargs)
-        vid = user.vlan_vid
 
         try:
             dpid1, port1 = user.translator.translate_dpid_port(vdpid1, vport1)
             dpid2, port2 = user.translator.translate_dpid_port(vdpid2, vport2)
         except:
-            body="Wrong dpid!"
+            body="Permission denied!"
         else:
+            vid = user.vlan_vid
             self.con_manager.add_route(dpid1, port1, dpid2, port2, vid)
             body="Success!"
             
@@ -132,14 +132,14 @@ class TrustSDNStatsController(StatsController):
 
     def disconnect_hosts(self, req, vdpid1, vport1, vdpid2, vport2, **_kwargs):
         user = self.manager.get_user(req, **_kwargs)
-        vid = user.vlan_vid
 
         try:
             dpid1, port1 = user.translator.translate_dpid_port(vdpid1, vport1)
             dpid2, port2 = user.translator.translate_dpid_port(vdpid2, vport2)
         except:
-            body="Wrong dpid!"
+            body="Permission denied!"
         else:
+            vid = user.vlan_vid
             self.con_manager.del_route(dpid1, port1, dpid2, port2, vid)
             body="Success!"
             

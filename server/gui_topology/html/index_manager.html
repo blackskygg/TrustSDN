@@ -3,14 +3,53 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="./ryu.topology.css">
-<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="./d3.min.js" charset="utf-8"></script>
 </head>
 <body>
-  <table>
-    <td> <h1>Ryu Topology Viewer</h1> </td>
-    <td width=30px></td>
-    <td> <button id="refresh">Refresh</button> </td>
-  </table>
+<h1>Ryu Topology Viewer</h1>
 <script src="./ryu.topology_manager.js" charset="utf-8"></script>
+
+<form id="myform1">
+  <fieldset>
+    <legend>连通性配置</legend>  
+	交换机号1：<input type="text" id = "switch1"/><br>
+	端口号1：&nbsp;&nbsp;&nbsp;<input type="text" id = "port1"/><br>
+	交换机号2：<input type="text" id = "switch2"/><br>
+        端口号2：&nbsp;&nbsp;&nbsp;<input type="text" id = "port2"/><br>
+    <input type="button" value="连接" id="btn_connect" onclick="alert(connect(GetSwitch1(), GetPort1(), GetSwitch2(), GetPort2(), 0))">
+    <input type="button" value="断开" id="btn_connect" onclick="alert(connect(GetSwitch1(), GetPort1(), GetSwitch2(), GetPort2(), 1))">
+
+    <script>
+	function GetSwitch1()
+	{
+		//alert(document.getElementById("switch2_2").value);
+		return document.getElementById("switch1").value;
+	}
+	function GetPort1()
+	{
+		//alert(document.getElementById("switch2_2").value);
+		return document.getElementById("port1").value;
+	}
+	function GetSwitch2()
+	{
+		//alert(document.getElementById("switch2_2").value);
+		return document.getElementById("switch2").value;
+	}
+	function GetPort2()
+	{
+		//alert(document.getElementById("switch2_2").value);
+		return document.getElementById("port2").value;
+	}
+	</script>
+  </fieldset>
+
+  <script>
+    var elem1=document.getElementById("myform1");//获取控件
+    elem1.style.position = "absolute";//设置绝对定位（或者相对定位）
+    elem1.style.left = "1000px";//设置left数值
+    elem1.style.top = "80px";//设置top数值
+  </script>
+
+</form>
 </body>
 </html>

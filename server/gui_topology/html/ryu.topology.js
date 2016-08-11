@@ -325,5 +325,29 @@ function main() {
     initialize_topology();
 }
 
-document.getElementById("refresh").onclick=initialize_topology
+function connect(switch1, port1 ,switch2, port2, func_no)
+{
+    
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+    {// code for IE7+, Firefox, Chrome, Opera, Safari
+	xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {// code for IE6, IE5
+	xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    func = ["connect", "disconnect"]
+    
+    var request = "/config/" + func[func_no] + "/" + switch1 + "/" + port1
+	+ "/" + switch2 + "/" + port2
+    
+    //document.getElementById("myp").innerHTML = attact1;
+    xmlhttp.open("GET",request,false);
+    xmlhttp.send();
+
+    return xmlhttp.responseText;
+}
+//document.getElementById("refresh").onclick=initialize_topology
 main();
