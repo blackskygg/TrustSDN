@@ -1,4 +1,3 @@
-import pdb
 import json
 import logging
 
@@ -218,6 +217,13 @@ class UserManager(object):
 
     def assign_table(self, dpid, n_tables):
         """ partion the flow tables """
+        if dpid not in self.vlan_to_port:
+            self.table_assign.setdefault(dpid, {})
+            self.table_assign[dpid].setdefault("others",
+                                               [0, n_tables, 0])
+
+            return
+
         n_vid = len(self.vlan_to_port[dpid])
         #we will divide the tables into n_vid+1 parts
         tbl_per_vid = n_tables // (n_vid+1)
@@ -262,10 +268,6 @@ class UserManager(object):
                     type = int(vsinfo["port_type"][rp])
                     self.vlan_to_port[str(vsinfo["real"])][vid][type].append(int(rp))
                     self.port_to_vlan[(int(vsinfo["real"]), int(rp))] = (int(vid), int(vdpid), int(vp))
-
-#        LOG.info("port_to_vlan:\n"
-#                         + json.dumps(self.port_to_vlan, indent = 1))
-
 
     def get_user_by_cert(self, x509):
         digest = x509.digest('sha1')

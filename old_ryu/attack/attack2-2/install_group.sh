@@ -11,16 +11,16 @@ curl -X POST -d '
 		{
 		    "type" : "SET_FIELD",
                     "field" : "eth_dst",
-                    "value" : "00:00:00:00:00:07"
+                    "value" : "00:00:00:00:00:03"
                 },
 		{
 		    "type" : "SET_FIELD",
                     "field" : "ipv4_dst",
-                    "value" : "10.0.0.7"
+                    "value" : "10.0.0.3"
                 },
 		{
 		    "type" : "OUTPUT",
-                    "port" : 6
+                    "port" : 4
                 }
 	    ]
 	},
@@ -49,16 +49,16 @@ curl -X POST -d '
 		{
 		    "type" : "SET_FIELD",
                     "field" : "eth_dst",
-                    "value" : "00:00:00:00:00:07"
+                    "value" : "00:00:00:00:00:03"
                 },
 		{
 		    "type" : "SET_FIELD",
                     "field" : "ipv4_dst",
-                    "value" : "10.0.0.7"
+                    "value" : "10.0.0.3"
                 },
 		{
 		    "type" : "OUTPUT",
-                    "port" : 6
+                    "port" : 4
                 }
 	    ]
 	},

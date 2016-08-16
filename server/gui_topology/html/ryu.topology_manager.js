@@ -337,12 +337,21 @@ function connect(switch1, port1 ,switch2, port2, func_no)
     
     var request = "/config/" + func[func_no] + "/" + switch1 + "/" + port1
 	+ "/" + switch2 + "/" + port2
-    
+
+    xmlhttp.onreadystatechange=function()
+    {
+	if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	{
+	    alert(xmlhttp.responseText);
+	}
+    }
+
     //document.getElementById("myp").innerHTML = attact1;
-    xmlhttp.open("GET",request,false);
+    xmlhttp.open("GET",request,true);
     xmlhttp.send();
 
     return xmlhttp.responseText;
 }
+
 //document.getElementById("refresh").onclick=initialize_topology
 main();

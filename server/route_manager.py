@@ -2,9 +2,11 @@ import json
 from ryu.base import app_manager
 from trustsdn.server.user_manager import UserManager
 import trustsdn.topology.api as tapi
+import pdb
 
 
 class ConManager(app_manager.RyuApp):
+    
     """ this class manages the per-tanent connectivity status"""
     def __init__(self, *args, **kwargs):
         super(ConManager, self).__init__(*args, **kwargs)
@@ -12,20 +14,21 @@ class ConManager(app_manager.RyuApp):
         self.mac_to_port = {}        #maps (vid,mac) to (dpid, port)
         self.flooding_rules = {}  #dpid=>{macs=>{endps, midps}}
         self.flow_path = {} #src_dpid=>{dst_dpid=>[(dpid, outp)]}
-
     def prepare(self, manager, controller):
         self.usr_manager = manager
         self.cntl = controller
         self.load_config()
 
     #to be changed to BFS
-    def search_path(self, path, cur_dpid, dst_dpid):
+    def search_path(self, path, cur_dpid, dst_dpid, mark):
+        mark[cur_dpid] = True
         if cur_dpid == dst_dpid:
                 return True
 
         for port, next_dpid in self.topo[cur_dpid]["out"].items():
             path.append((cur_dpid, int(port)))
-            if self.search_path(path, next_dpid, dst_dpid):
+            if next_dpid not in mark and \
+            self.search_path(path, next_dpid, dst_dpid, mark):
                 return True
             path.pop()
             
@@ -37,7 +40,7 @@ class ConManager(app_manager.RyuApp):
             for dst_dpid in self.usr_manager.dpids:
                 path = []
                 self.flow_path[src_dpid].setdefault(dst_dpid, path)
-                self.search_path(path, src_dpid, dst_dpid)
+                self.search_path(path, src_dpid, dst_dpid, {})
 
         print(json.dumps(self.flow_path, indent = 1))
     

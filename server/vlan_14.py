@@ -42,7 +42,7 @@ class Vlan14(app_manager.RyuApp):
         
     def assign_flooding_grp(self):
         group_cnt = {} #{dpid => {vid => next_group_id}}
-        for dpid in self.usr_manager.dpids:
+        for dpid in self.con_manager.flood_path:
             group_cnt[dpid] = {}
             self.flooding_grp[dpid] = {}
 
@@ -58,9 +58,6 @@ class Vlan14(app_manager.RyuApp):
                 
                 group_cnt[dpid][vid] = vtable_id + 1
                 cnt = cnt + 1
-        print self.usr_manager.group_assign
-        print self.usr_manager.group_assign_r
-                
     
     def setup_tagging_tbl(self, datapath, dpid):
         ofproto = datapath.ofproto
@@ -109,7 +106,9 @@ class Vlan14(app_manager.RyuApp):
                                  instructions = inst, table_id = self.JMP_TBL)
         datapath.send_msg(mod)
 
-    def setup_middle_switch(self, datapath, dpid):
+    def setup_middle_switch(self, datapath, dpid, n_tables):
+        self.usr_manager.assign_table(dpid, n_tables // 2)
+
         parser = datapath.ofproto_parser
         ofproto = datapath.ofproto
         match = parser.OFPMatch()
@@ -142,10 +141,10 @@ class Vlan14(app_manager.RyuApp):
             self.setup_tagging_tbl(datapath, dpid)
             self.setup_jumping_tbl(datapath, dpid, ev.msg.n_tables)
         else:
-            self.setup_middle_switch(datapath, dpid)
+            self.setup_middle_switch(datapath, dpid, ev.msg.n_tables)
 
         #if we've received all the dp's responses, gen the base flows
-        if self.n_ready_dp == len(self.usr_manager.dpids):
+        if self.n_ready_dp == len(self.con_manager.flood_path):
             self.assign_flooding_grp()
             self.con_manager.gen_flow_path()
             self.con_manager.gen_flooding_flows()
@@ -168,7 +167,8 @@ class Vlan14(app_manager.RyuApp):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
 
-        if vid in self.usr_manager.vlan_to_port[dpid]:
+        if dpid in self.usr_manager.vlan_to_port and \
+           vid in self.usr_manager.vlan_to_port[dpid]:
             table_id = self.usr_manager.table_assign[dpid][vid][0]
         else:
             table_id = self.usr_manager.table_assign[dpid]["others"][0]

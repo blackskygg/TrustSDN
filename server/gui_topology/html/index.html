@@ -16,8 +16,8 @@
 	端口号1：&nbsp;&nbsp;&nbsp;<input type="text" id = "port1"/><br>
 	交换机号2：<input type="text" id = "switch2"/><br>
         端口号2：&nbsp;&nbsp;&nbsp;<input type="text" id = "port2"/><br>
-    <input type="button" value="连接" id="btn_connect" onclick="alert(connect(GetSwitch1(), GetPort1(), GetSwitch2(), GetPort2(), 0))">
-    <input type="button" value="断开" id="btn_connect" onclick="alert(connect(GetSwitch1(), GetPort1(), GetSwitch2(), GetPort2(), 1))">
+    <input type="button" value="连接" id="btn_connect" onclick="connect(GetSwitch1(), GetPort1(), GetSwitch2(), GetPort2(), 0)">
+    <input type="button" value="断开" id="btn_connect" onclick="connect(GetSwitch1(), GetPort1(), GetSwitch2(), GetPort2(), 1)">
 
     <script>
 	function GetSwitch1()
